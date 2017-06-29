@@ -1,4 +1,4 @@
-(defproject boomerang "0.1.0-SNAPSHOT"
+(defproject org.clojars.mike706574/boomerang "0.1.0-SNAPSHOT"
   :description "An HTTP/messaging utility library."
   :url "http://github.com/mike706574/boomerang"
   :license {:name "Eclipse Public License"
