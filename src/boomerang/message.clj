@@ -1,5 +1,6 @@
 (ns boomerang.message
-  (:require [clojure.data.json :as json]
+  (:require [byte-streams]
+            [clojure.data.json :as json]
             [clojure.edn :as edn]
             [clojure.java.io :as io]
             [clojure.pprint :as pprint]
@@ -74,19 +75,20 @@
 (defn decode
   "Decodes body using the given content type content-type."
   [content-type body]
-  (decode-stream
-   content-type
-   (condp instance? body
-     java.io.InputStream body
-     String (if (= content-type "application/transit+msgpack")
-              (throw (ex-info "Strings are not supported when using application/transit+msgpack."
-                              {:content-type content-type
-                               :body body}))
-              (java.io.ByteArrayInputStream. (.getBytes body)))
-     byte-array-type (java.io.ByteArrayInputStream. body)
-     (throw (ex-info (str "Body type \"" (type body) "\" is not supported.")
-                     {:content-type content-type
-                      :body body})))))
+  (if (and (string? body)
+           (= content-type "application/transit+msgpack"))
+    (throw (ex-info "Strings are not supported when using application/transit+msgpack."
+                    {:content-type content-type
+                     :body body}))
+    (decode-stream
+     content-type
+     (try
+       (byte-streams/to-input-stream body)
+       (catch IllegalArgumentException e
+         (throw (ex-info (str "Body type \"" (type body) "\" is not supported.")
+                         {:content-type content-type
+                          :body body
+                          :exception e})))))))
 
 (defmulti encode
   "Encodes body using the given content-type content-type."

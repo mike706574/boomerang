@@ -7,4 +7,5 @@
                  [org.clojure/spec.alpha "0.1.123"]
                  [org.clojure/data.json "0.2.6"]
                  [com.taoensso/timbre "4.10.0"]
-                 [com.cognitect/transit-clj "0.8.300"]])
+                 [com.cognitect/transit-clj "0.8.300"]
+                 [byte-streams "0.2.3"]])
