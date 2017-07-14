@@ -11,11 +11,16 @@
                                      "application/transit+json"
                                      "application/transit+msgpack"})
 
-(defn ^:private parse-media-type
+(defn parse-media-type
   [header]
   (str/trim (first (str/split header #";"))))
 
-(defn ^:private  header [request name] (get-in request [:headers name]))
+(def ^:private equals-ignore-case? #(= (str/lower-case %1) (str/lower-case %2)))
+
+(defn header [request name]
+  (some-> (filter #(equals-ignore-case? (key %) name) (:headers request))
+          first
+          val))
 
 (defn content-type
   [request]
@@ -60,7 +65,7 @@
       (catch Exception ex
         (log/error ex (str "Failed to decode " content-type " request body."))))))
 
-(defn response-body "application/transit+msgpack"
+(defn response-body
   [request body]
   (let [content-type (accept request)]
     (try
