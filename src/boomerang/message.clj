@@ -1,5 +1,5 @@
 (ns boomerang.message
-  (:require [clojure.data.json :as json]
+  (:require [boomerang.json :as json]
             [clojure.edn :as edn]
             [clojure.java.io :as io]
             [clojure.pprint :as pprint]
@@ -7,18 +7,6 @@
             [cognitect.transit :as transit]))
 
 (defn ^:private pretty [form] (with-out-str (pprint/pprint form)))
-
-(defn ^:private unkeyword
-  [k]
-  (cond
-    (string? k) k
-    (keyword? k) (let [kns (namespace k)
-                       kn (name k)]
-                   (if kns
-                     (str kns "/" kn)
-                     kn))
-    :else (throw (ex-info (str "Invalid key: " k) {:key k
-                                                   :class (class k)}))))
 
 (def ^:private supported-content-type #{"text/plain"
                                         "application/edn"
@@ -59,7 +47,7 @@
 
 (defmethod decode-stream "application/json"
   [_ body]
-  (json/read (io/reader body) :key-fn keyword))
+  (json/read (io/reader body)))
 
 (defmethod decode-stream "text/plain"
   [_ body]
@@ -98,7 +86,7 @@
 
 (defmethod encode "application/json"
   [_ body]
-  (.getBytes (json/write-str body :key-fn unkeyword)))
+  (.getBytes (json/write-str body)))
 
 (defmethod encode "application/edn"
   [_ body]
