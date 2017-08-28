@@ -1,4 +1,5 @@
 (ns boomerang.json
+  (:refer-clojure :exclude [read])
   (:require [clojure.data.json :as json]))
 
 (defn ^:private unkeyword
