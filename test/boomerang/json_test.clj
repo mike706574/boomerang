@@ -4,14 +4,14 @@
 
 (def example "{\"foo\\/bar\":\"baz\"}")
 
-(deftest read
+(deftest reading-from-a-reader
   (testing "reading from a reader"
     (is (= {:foo/bar "baz"} (json/read (java.io.StringReader. example))))))
 
-(deftest read-str
+(deftest reading-from-astring
   (testing "reading from string"
     (is (= {:foo/bar "baz"} (json/read-str example)))))
 
-(deftest write-str
+(deftest writing-to-a-string
   (testing "writing to a string"
     (is (= example (json/write-str {:foo/bar "baz"})))))
